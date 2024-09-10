@@ -1,122 +1,3440 @@
 openapi: 3.1.0
 info:
-  version: 1.0.0
-  title: Example API
-  termsOfService: https://example.com/terms/
-  contact:
-    name: Contact our support
-    email: contact@example.com
-    url: http://example.com/contact
+  title: Geizhals/Skinflint API
+  description: |-
+    This is a WIP documentation for the API powering the popular price tracker [Geizhals/Skinflint](https://en.wikipedia.org/wiki/Geizhals).
+    
+    For information on how to create the bearer token, which is required for every request, except for `ACS` and images, see [here](https://github.com/Vernoxvernax/geizhals-api/blob/main/bearer_token.md)
+  version: 0.1.0
   license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  x-logo:
-    url: 'https://redocly.github.io/openapi-template/logo.png'
-    altText: OpenAPI example logo
-  description: >
-    This is an **example** API to demonstrate features of the OpenAPI
-    specification.
-
-    # Introduction
-
-    This API definition is intended to to be a good starting point for
-    describing your API in [OpenAPI/Swagger
-    format](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md).
-
-    It also demonstrates features of the
-    [create-openapi-repo](https://github.com/Redocly/create-openapi-repo) tool
-    and the [Redoc](https://github.com/Redocly/Redoc) documentation engine. Beyond
-    the standard OpenAPI syntax, we use a few 
-    [vendor extensions](https://github.com/Redocly/Redoc/blob/main/docs/redoc-vendor-extensions.md).
-
-    # OpenAPI Specification
-
-    The goal of The OpenAPI Specification is to define a standard, language-agnostic interface to REST APIs which
-    allows both humans and computers to discover and understand the capabilities
-    of the service without access to source
-    code, documentation, or through network traffic inspection. When properly
-    defined via OpenAPI, a consumer can 
-    understand and interact with the remote service with a minimal amount of
-    implementation logic. Similar to what
-    interfaces have done for lower-level programming, OpenAPI removes the
-    guesswork in calling the service.
-externalDocs:
-  description: "Find out how to create a GitHub repo for your OpenAPI definition."
-  url: 'https://github.com/Redocly/create-openapi-repo'
-tags:
-  - name: Echo
-    description: "Example echo operations."
-  - name: User
-    description: "Example actions on user accounts."
-  - name: Admin
-    description: "Example operations reserved for administrators."
-  - name: Info
-    description: "Example operations for retrieving information."
-  - name: Tag
-    description: "This is a tag description."
-x-tagGroups:
-  - name: General
-    tags:
-      - User
-      - Info
-      - Echo
-  - name: Administration
-    tags:
-      - Admin
+    name: MIT
+    identifier: MIT
 servers:
-  - url: https://{tenant}/api/v1
-    variables:
-      tenant:
-        default: www
-        description: Your tenant id
-  - url: https://example.com/api/v1
+  - url: https://api.geizhals.net
 paths:
-  '/users/{username}':
-    $ref: 'paths/users_{username}.yaml'
-  '/user':
-    $ref: 'paths/user.yaml'
-  '/user/list':
-    $ref: 'paths/user-status.yaml'
-  /pathItem:
-    $ref: paths/pathItem.yaml
-  /pathItemWithExamples:
-    $ref: paths/pathItemWithExamples.yaml
-  '/echo':
-    $ref: 'paths/echo.yaml'
-components:
-  securitySchemes:
-    main_auth:
-      description: "Example description text of the OAuth2 scheme."
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: http://example.com/api/oauth/dialog
-          scopes:
-            'read:users': read user info
-            'write:users': modify or remove users
-    api_key:
-      description: "Example description text of the API key scheme."
-      type: apiKey
-      in: header
-      name: api_key
-    basic_auth:
-      type: http
-      scheme: basic
-webhooks:
-  userInfo:
-    post:
-      summary: New user webhook
-      description: "Information about a new user in the system."
-      operationId: userInfo
+  /usercontent/v0/pricealarm:
+    get:
       tags:
-        - Info
+        - Usercontent
+      summary: Receive information about device specific pricealarms
+      operationId: "getPricealarm"
+      description: Todo
+      parameters:
+        - name: device_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operation successful. Returning a PriceAlarm object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceAlarm'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /usercontent/v0/pricealarm/product/{id}:
+    post:
+      tags:
+        - Usercontent
+      summary: Configure a new pricealarm
+      operationId: "createPricealarm"
+      description: Todo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: 'components/schemas/User.yaml'
+              $ref: '#/components/schemas/NewPriceAlarmReq'
       responses:
         '200':
-          description: "Successfully retrieved information about a new user."
+          description: Operation successful. Returning a EditPriceAlarmRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditPriceAlarmRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
       security:
-        - api_key: []
+        - bearerAuth: []
+    put:
+      tags:
+        - Usercontent
+      summary: Update an already existing pricealarm
+      operationId: "updatePricealarm"
+      description: Todo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePriceAlarmReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a EditPriceAlarmRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditPriceAlarmRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - Usercontent
+      summary: Delete a pricealarm
+      operationId: "deletePricealarm"
+      description: Todo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeletePriceAlarmReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a EditPriceAlarmRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditPriceAlarmRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /usercontent/v0/pricealarm/{id}/enable:
+    put:
+      tags:
+        - Usercontent
+      summary: Turn on a specific pricealarms
+      operationId: "EnablePricealarm"
+      description: Todo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TogglePriceAlarmReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a EditPriceAlarmRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditPriceAlarmRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /usercontent/v0/pricealarm/{id}/disable:
+    put:
+      tags:
+        - Usercontent
+      summary: Turn off a specific pricealarms
+      operationId: "DisablePricealarm"
+      description: Todo
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TogglePriceAlarmReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a EditPriceAlarmRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditPriceAlarmRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /usercontent/v0/push_notification/settings:
+    get:
+      tags:
+        - Usercontent
+      summary: Receive device specific push notification settings?
+      operationId: "getPushNotificationSettings"
+      description: Todo
+      parameters:
+        - name: device_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operation successful. Returning a PushNotificationSettingsRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushNotificationSettingsRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /usercontent/v0/wishlist/local:
+    post:
+      tags:
+        - Usercontent
+      summary: Get information about "local" wishlists
+      operationId: "getLocalWishlist"
+      description: Kinda just query_product.
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocalWishlistReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a LocalWishlistRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocalWishlistRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /gh/v9/top_categories:
+    post:
+      tags:
+        - FrontPage
+      summary: Get the top categories
+      operationId: "getTopCategories"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopCategoriesReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a TopCategoriesRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopCategoriesRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /gh/v9/categories:
+    post:
+      tags:
+        - FrontPage
+      summary: Get all categories
+      operationId: "getCategories"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoriesReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a CategoriesRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoriesRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /gh/v9/categorylist:
+    post:
+      tags:
+        - FrontPage
+      summary: Get and filter products in a specific category
+      operationId: "getCategoryList"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryListReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a CategoryListRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryListRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /gh/v9/new_products:
+    post:
+      tags:
+        - FrontPage
+      summary: Get new products
+      operationId: "getNewProducts"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProductsReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a NewProductsRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewProductsRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /gh/v9/top_products:
+    post:
+      tags:
+        - FrontPage
+      summary: Get the top products
+      operationId: "getTopNewProducts"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopProductsReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a TopProductsRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopProductsRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /gh/v9/search_product:
+    post:
+      tags:
+        - Search
+      summary: Run an in-depth search
+      operationId: "searchProduct"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchProductReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a SearchProductRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchProductRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /acs:
+    get:
+      tags:
+        - Search
+      summary: Run a quick search (product titles)
+      operationId: "quickSearch"
+      description: Todo
+      parameters:
+        - name: lang
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "de"
+        - name: o
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "json"
+        - name: loc
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "at"
+        - name: k
+          in: query
+          required: true
+          schema:
+            type: string
+            default: "SearchTerm"
+      responses:
+        '200':
+          description: Operation successful. Returning an ACS object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ACS'
+        '400':
+          description: "This autocomplete service needs 'k' parameter."
+          content:
+            text/plain:
+              schema:
+                type: string
+                default: "This autocomplete service needs 'k' parameter."
+  /gh/v9/products_details:
+    post:
+      tags:
+        - Products
+      summary: Get compact information about a specific product
+      operationId: "getProductDetails"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductsDetailsReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a ProductsDetailsRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductsDetailsRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /gh/v9/price_history:
+    post:
+      tags:
+        - Products
+      summary: Get the price history of a product
+      operationId: "getPriceHistory"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PriceHistoryReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a PriceHistoryRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceHistoryRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /gh/v9/bestprice_development:
+    post:
+      tags:
+        - Products
+      summary: Get price development information
+      operationId: "getPriceDevelopment"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BestPriceDevelReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a BestPriceDevelRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BestPriceDevelRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /gh/v9/query_product:
+    post:
+      tags:
+        - Products
+      summary: Get all information about a specific product
+      operationId: "getAllProductDetails"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryProductReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a QueryProductRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryProductRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /gh/v9/query_product_ratings:
+    post:
+      tags:
+        - Products
+      summary: Get ratings about a product
+      operationId: "getProductRatings"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductRatingsReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a ProductRatingsRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductRatingsRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /gh/v9/query_variant:
+    post:
+      tags:
+        - Products
+      summary: Get variants of a product
+      operationId: "getProductVariants"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryVariantReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a QueryVariantRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryVariantRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /gh/v9/compare_products:
+    post:
+      tags:
+        - Comparing
+      summary: Add products to compare list
+      operationId: "addProductComparison"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompareProductsReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a CompareProductsRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompareProductsRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
+  /i/s/{id}.jpg:
+    get:
+      tags:
+        - Images
+      summary: Get a thumbnail for a top category.
+      operationId: "getTopCategoryImage"
+      description: Todo
+      servers:
+        - url: https://gzhls.at
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operation successful. Returning an image.
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Not found. Invalid image identifier.
+  /i/{m}/{o}/{id}.jpg:
+    get:
+      tags:
+        - Images
+      summary: Get a high quality image for a product or category.
+      operationId: "getImage"
+      description: Todo
+      servers:
+        - url: https://gzhls.at
+      parameters:
+        - name: m
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: o
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operation successful. Returning an image.
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Not found. Invalid image identifier.
+  /i/{m}/{o}/{id}.webp:
+    get:
+      tags:
+        - Images
+      summary: Get a low quality image for a product or category.
+      operationId: "getThumb"
+      description: Todo
+      servers:
+        - url: https://gzhls.at
+      parameters:
+        - name: m
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: o
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Operation successful. Returning an image.
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Not found. Invalid image identifier.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Hloc:
+      type: array
+      items:
+        type: string
+      example: ["at", "de", "eu", "pl", "uk"]
+    Lang:
+      type: string
+      enum: ["de", "en", "pl"]
+    Loc:
+      type: string
+      enum: ["at", "de", "eu", "pl", "uk"]
+    BestAvl:
+      type: [integer, "null"]
+      enum: [0, 1, 2]
+      description: "Unknown parameter."
+    DealsType0:
+      type: [object, "null"]
+      properties:
+        alltime:
+          type: [integer, "null"]
+        change:
+          type: [integer, "null"]
+          default: -10
+        oldprice:
+          type: [string, "null"]
+        top_deal:
+          type: [integer, "null"]
+    DealsType1:
+      type: [array, "null"]
+      items:
+        type: object
+        properties:
+          alltime_best:
+            type: integer
+            enum: [0, 1]
+          change_percent:
+            type: integer
+            default: -1
+          old_price:
+            type: string
+          product_id:
+            type: integer
+          top_deal:
+            type: integer
+            enum: [0, 1]
+    Image:
+      type: [object, "null"]
+      properties:
+        u:
+          type: string
+        h:
+          type: integer
+        w:
+          type: integer
+        t:
+          type: string
+          default: "jpg"
+        s:
+          type: integer
+    Description:
+      type: [array, "null"]
+      items:
+        type: object
+        properties:
+          prop:
+            type: string
+          value:
+            type: string
+    Avl:
+      type: object
+      properties:
+        best_code:
+          type: integer
+        descr:
+          type: array
+          items:
+            type: object
+            properties:
+              branch:
+                type: string
+              text:
+                type: string
+        time:
+          type: [string, "null"]
+          format: date-time
+    PPU:
+      type: [object, "null"]
+      properties:
+        value:
+          type: number
+          default: 400.5123
+        unit:
+          type: string
+          default: "kWh"
+    Pricing:
+      type: [object, "null"]
+      properties:
+        eur_value:
+          type: number
+          default: 99.99
+        loc:
+          $ref: '#/components/schemas/Loc'
+        loc_currency:
+          type: string
+          default: "EUR"
+        loc_value:
+          type: number
+          default: 99.99
+        orig_currency:
+          type: [string, "null"]
+        orig_loc:
+          type: [string, "null"]
+        orig_value:
+          type: [number, "null"]
+          default: 99.99
+    FullProduct:
+      type: object
+      properties:
+        asins:
+          type: [array, "null"]
+          items:
+            type: string
+        bpoffer_link:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category'
+        deals:
+          $ref: '#/components/schemas/DealsType0'
+        description:
+          $ref: '#/components/schemas/Description'
+        gtin:
+          type: array
+          items:
+            type: string
+        gzhid:
+          type: integer
+        image_comments:
+          type: array
+          items:
+            # TODO: find type of this var
+            description: "unknown type"
+        images:
+          type: array
+          items:
+            type: string
+        listed_since:
+          type: string
+          format: date-time
+        manufacturer_id:
+          description: Can be an integer or a string
+        manufacturer_name:
+          type: string
+        bestprices:
+          type: object
+          properties:
+            min:
+              type: number
+              default: 80.99
+            max:
+              type: number
+              default: 99.99
+            last:
+              type: integer
+            first:
+              type: integer
+        offer_count:
+          type: integer
+        offers:
+          type: array
+          items:
+            type: object
+            properties:
+              avl:
+                $ref: '#/components/schemas/Avl'
+              ppu:
+                $ref: '#/components/schemas/PPU'
+              price:
+                type: object
+                properties:
+                  currency:
+                    type: string
+                    default: "EUR"
+                  date:
+                    type: string
+                    format: date-time
+                  legal:
+                    type: [string, "null"]
+                  url:
+                    type: string
+                  value:
+                    type: number
+                    default: 99.99
+              pricing:
+                $ref: '#/components/schemas/Pricing'
+              shop:
+                type: object
+                properties:
+                  address:
+                    type: [object, "null"]
+                    properties:
+                      city:
+                        type: string
+                      country:
+                        type: [string, "null"]
+                        default: "A"
+                      street:
+                        type: string
+                      zip:
+                        type: string
+                  agb_link:
+                    type: [string, "null"]
+                  clean_baseurl:
+                    type: [string, "null"]
+                  email:
+                    type: [string, "null"]
+                    format: email
+                  id:
+                    type: integer
+                  latitude:
+                    type: [number, "null"]
+                    default: 53.83788794117053
+                  longitude:
+                    type: [number, "null"]
+                    default: -9.351442265895523
+                  loc:
+                    $ref: '#/components/schemas/Loc'
+                  logo:
+                    type: [string, "null"]
+                  merchant_name:
+                    type: [string, "null"]
+                  name:
+                    type: string
+                  opening_hours:
+                    type: [string, "null"]
+                  pickup_info:
+                    # TODO: find type of this var
+                    description: "unknown type"
+                  prod_desc:
+                    type: array
+                    items:
+                      type: string
+                  rating:
+                    type: [object, "null"]
+                    properties:
+                      count:
+                        type: [integer, "null"]
+                      rating:
+                        type: [number, "null"]
+                        default: 4.9
+                      valid:
+                        type: [integer, "null"]
+                  ratings:
+                    type: [object, "null"]
+                    properties:
+                      count:
+                        type: [integer, "null"]
+                      rating:
+                        type: [number, "null"]
+                        default: 4.8
+                      valid:
+                        type: [integer, "null"]
+                  shipping:
+                    type: object
+                    additionalProperties:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        properties:
+                          shipping_option:
+                            type: string
+                          shipping_price:
+                            type: number
+                            default: 99.99
+                  shipping_texts:
+                    type: object
+                    additionalProperties:
+                      type: array
+                      items:
+                        type: string
+                  tel:
+                    type: [string, "null"]
+                  url:
+                    type: string
+        prices:
+          type: object
+          properties:
+            avg:
+              type: number
+              default: 99.99
+            best:
+              type: number
+              default: 99.99
+        product:
+          type: string
+        product_for_sort:
+          type: string
+        productvideo:
+          type: array
+          items:
+            type: string
+        rating_comments:
+          type: [integer, "null"]
+        rating_count:
+          type: [integer, "null"]
+        rating_percent:
+          type: [number, "null"]
+          default: 99.99
+        rating_stars:
+          type: [number, "null"]
+          default: 4.9
+        test_reviews:
+          type: [array, "null"]
+          items:
+            type: object
+            properties:
+              abstract:
+                type: [string, "null"]
+              abstract_status:
+                type: string
+              ctime:
+                type: integer
+              flag:
+                type: string
+              position:
+                type: integer
+              status:
+                type: string
+              title:
+                type: string
+              url:
+                type: string
+              score:
+                type: [array, "null"]
+                items:
+                  type: integer
+              metascore:
+                type: [integer, "null"]
+              logo_url:
+                oneOf:
+                  - type: string
+                  - type: object
+                  - type: "null"
+                properties:
+                  u:
+                    type: string
+                  w:
+                    type: integer
+                  h:
+                    type: integer
+        popularity:
+          type: [integer, "null"]
+        urls:
+          type: object
+          properties:
+            manufacturer:
+              type: string
+            offers:
+              type: string
+            overview:
+              type: string
+            pricehist:
+              type: string
+            rate:
+              type: string
+            reviews:
+              type: string
+        variant_count:
+          type: integer
+        variant_id:
+          description: Can be an integer or a string
+          oneOf:
+            - type: string
+            - type: integer
+    QueryVariantReq:
+      type: object
+      properties:
+        variant:
+          type: integer
+        params:
+          type: object
+          properties:
+            deals_as_array:
+              type: integer
+              enum: [0, 1]
+            hloc:
+              $ref: '#/components/schemas/Hloc'
+            lang:
+              $ref: '#/components/schemas/Lang'
+            loc:
+              $ref: '#/components/schemas/Loc'
+            pagesize:
+              type: integer
+            sort:
+              type: string
+              enum: ["t", "lz", "p", "-p"]
+              description: |
+                - popularity: [`t`]
+                - delivery time: [`lz`]
+                - best price - ascending: [`p`]
+                - best price - descending: [`-p`]
+            v:
+              type: string
+              enum: ["e", "l", "k"]
+              description: |
+                - {no filter}: [`e`]
+                - in stock: [`l`]
+                - short term (up to 4 weekdays): [`k`]
+    QueryVariantRes:
+      type: object
+      properties:
+        response:
+          type: object
+          properties:
+            best_avl:
+              $ref: '#/components/schemas/BestAvl'
+            can_show_deals:
+              type: integer
+              enum: [0, 1]
+            cms_ratgeber_markup:
+              type: "null"
+            current_link:
+              type: string
+            data:
+              type: object
+              properties:
+                artikel:
+                  type: array
+                  items:
+                    type: integer
+                image:
+                  type: array
+                  items:
+                    type: integer
+                leafname_prefix:
+                  type: string
+                manufacturer_id:
+                  type: integer
+                name:
+                  type: string
+                properties:
+                  type: array
+                  items:
+                    type: string
+            deals:
+              $ref: '#/components/schemas/DealsType1'
+            desc:
+              type: object
+              properties:
+                properties:
+                  additionalProperties:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      values:
+                        type: array
+                        items:
+                          type: string
+                property_sorting:
+                  type: array
+                  items:
+                    type: string
+            filter_data:
+              type: array
+              items:
+                type: object
+                properties:
+                  choices:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        count:
+                          type: integer
+                        id:
+                          type: string
+                        title:
+                          type: string
+                        xf:
+                          type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  type:
+                    type: string
+                  visible:
+                    type: [integer, "null"]
+                    enum: [null, 1]
+            filter_reset_link:
+              type: string
+            filtercount:
+              type: integer
+            gallery_data:
+              type: string
+              description: "a string formatted json body looking like Schema: GalleryData"
+              example: "{\"fullscreenTitles\":[],\"images\":[{\"src\":\"https://gzhls.at/i/46/64/2674664-l0.jpg\",\"c\":\"\",\"thumb\":\"https://gzhls.at/i/46/64/2674664-s0.jpg\",\"type\":\"image\",\"w\":980,\"h\":1500},{\"type\":\"image\",\"w\":1034,\"h\":1500,\"src\":\"https://gzhls.at/i/51/61/2085161-l0.jpg\",\"c\":\"\",\"thumb\":\"https://gzhls.at/i/51/61/2085161-s0.jpg\"},{\"thumb\":\"https://gzhls.at/i/60/98/2856098-s0.jpg\",\"src\":\"https://gzhls.at/i/60/98/2856098-l0.jpg\",\"c\":\"\",\"w\":1081,\"h\":1500,\"type\":\"image\"},{\"thumb\":\"https://gzhls.at/i/87/17/1888717-s0.jpg\",\"c\":\"\",\"src\":\"https://gzhls.at/i/87/17/1888717-l0.jpg\",\"h\":1500,\"w\":1026,\"type\":\"image\"},{\"w\":1081,\"h\":1500,\"type\":\"image\",\"thumb\":\"https://gzhls.at/i/60/90/2856090-s0.jpg\",\"src\":\"https://gzhls.at/i/60/90/2856090-l0.jpg\",\"c\":\"\"}]}"
+            has_offers:
+              type: integer
+            hidden_fields:
+              type: array
+              items:
+                type: string
+            id:
+              type: integer
+            images:
+              type: object
+              properties:
+                img:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Image"
+                large:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Image"
+                medium:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Image"
+                thumb:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Image"
+            is_multiple:
+              type: object
+              properties:
+                size:
+                  type: integer
+            leafname:
+              type: string
+            manufacturer:
+              type: string
+            num_ratings:
+              type: integer
+            offers:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  agb_link:
+                    type: [string, "null"]
+                  best_lzf:
+                    type: integer
+                  best_price:
+                    type: [string, "null"]
+                  free_shipping:
+                    type: [string, "null"]
+                  h_id:
+                    type: [string, "null"]
+                  hname:
+                    type: [string, "null"]
+                  info_link:
+                    type: [string, "null"]
+                  merchant_link_data:
+                    type: [string, "null"]
+                    properties:
+                      has_analytics:
+                        type: integer
+                        enum: [0, 1]
+                      loc:
+                        $ref: '#/components/schemas/Loc'
+                      logo:
+                        type: [object, "null"]
+                        properties:
+                          h:
+                            type: integer
+                          src:
+                            type: string
+                          w:
+                            type: integer
+                      name:
+                        type: string
+                      product_price:
+                        type: number
+                        default: 99.99
+                      track_base:
+                        type: string
+                      tracking_merchant:
+                        type: string
+                      url:
+                        type: string
+                  num_offers:
+                    type: integer
+                  raw_price:
+                    type: [number, "null"]
+                    default: 99.99
+                  size:
+                    type: "null"
+                  vk_calc:
+                    type: [number, "null"]
+                    default: 9.99
+                  vk_calc_formatted:
+                    type: [number, "null"]
+                  worst_price:
+                    type: [number, "null"]
+                    default: 99.99
+            offers_json:
+              type: string
+              description: "a string formatted json body looking like the offers part from above"
+            params:
+              type: object
+              properties:
+                hloc:
+                  $ref: '#/components/schemas/Hloc'
+                lang:
+                  $ref: '#/components/schemas/Lang'
+                loc:
+                  $ref: '#/components/schemas/Loc'
+                pg:
+                  type: integer
+                size:
+                  type: array
+                  items:
+                    type: "null"
+                sort:
+                  type: string
+                  default: "t"
+            rating_percent_int:
+              type: integer
+            rating_stars:
+              type: number
+              default: 4.9
+            rating_stars_formatted:
+              type: string
+            ratings_url:
+              type: string
+            sizechart:
+              type: "null"
+            sort:
+              type: string
+              default: "t"
+            sort_form:
+              type: array
+              description: "This contains all possible sorting values. No idea why"
+              items:
+                type: object
+                properties:
+                  label:
+                    type: string
+                  name:
+                    type: string
+                  selected:
+                    type: [integer, "null"]
+                    enum: [null, 1]
+            sort_text:
+              type: string
+            urlargs:
+              type: string
+            variant_count:
+              type: integer
+            variant_url:
+              type: string
+            variants:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  img:
+                    $ref: "#/components/schemas/Image"
+                  medium:
+                    $ref: "#/components/schemas/Image"
+                  thumb:
+                    $ref: "#/components/schemas/Image"
+                  mpn:
+                    type: string
+                  name:
+                    type: string
+                  name_without_variant:
+                    type: string
+                  num_ratings:
+                    type: integer
+                  rating_stars:
+                    type: number
+                    default: 4.9
+                  seo_url:
+                    type: string
+                  short_name:
+                    type: string
+            variants_json:
+              type: string
+              description: "a string formatted json body looking like the variants part from above"
+    GalleryData:
+      type: object
+      properties:
+        fullscreenTitles:
+          type: array
+          items:
+            type: string
+        images:
+          type: array
+          items:
+            type: object
+            properties:
+              src:
+                type: string
+              c:
+                type: string
+              thumb:
+                type: string
+              type:
+                type: string
+              w:
+                type: integer
+              h:
+                type: integer
+    SearchProductRes:
+      type: object
+      properties:
+        response:
+          type: object
+          properties:
+            category_suggestions:
+              type: [array, "null"]
+              items:
+                # TODO: find type of this var
+                description: unknown
+            facet_aggregates:
+              type: object
+              properties:
+                categories:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      id:
+                        type: string
+                      m_id:
+                        type: [integer, "null"]
+                      m_name:
+                        type: [string, "null"]
+                      name:
+                        type: string
+                      o_id:
+                        type: [integer, "null"]
+                      o_name:
+                        type: [string, "null"]
+                manufacturer:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      id:
+                        type: integer
+                      name:
+                        type: string
+                price_range:
+                  type: object
+                  properties:
+                    max:
+                      type: number
+                      default: 99.99
+                    min:
+                      type: number
+                      default: 98.99
+            pager:
+              type: object
+              properties:
+                first_page:
+                  type: integer
+                last_page:
+                  type: integer
+                next_page:
+                  type: integer
+            products:
+              type: array
+              items:
+                $ref: '#/components/schemas/FullProduct'
+    SearchProductReq:
+      type: object
+      properties:
+        query:
+          type: string
+          default: ""
+        params:
+          type: object
+          properties:
+            add_asin:
+              type: integer
+              enum: [0, 1]
+            add_popularity:
+              type: boolean
+            add_ratings:
+              type: integer
+              enum: [0, 1]
+            allow_other_gloc:
+              type: integer
+              enum: [0, 1]
+            bestprice_extrema:
+              type: integer
+              enum: [0, 1]
+            category_suggestions:
+              type: integer
+              enum: [0, 1]
+            category_suggestions_details:
+              type: integer
+              enum: [0, 1]
+            bpmax:
+              type: integer
+            bpmin:
+              type: integer
+            filter_category:
+              type: string
+            filter_manufacturer:
+              type: integer
+            has_variants:
+              type: integer
+              enum: [0, 1]
+            hloc:
+              $ref: '#/components/schemas/Hloc'
+            lang:
+              $ref: '#/components/schemas/Lang'
+            loc:
+              $ref: '#/components/schemas/Loc'
+            n_offers:
+              type: integer
+            offset:
+              type: integer
+              enum: [0, 1]
+            pagesize:
+              type: integer
+            show_parent_category:
+              type: integer
+              enum: [0, 1]
+            sort:
+              type: string
+              enum: ["", "p", "-p"]
+              description: |
+                - relevance: [``]
+                - best price - ascending: [`p`]
+                - best price - descending: [`-p`]
+    TogglePriceAlarmReq:
+      type: object
+      properties:
+        device_id:
+          type: string
+        token:
+          type: string
+    QueryProductRes:
+      type: object
+      properties:
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/FullProduct'
+    QueryProductReq:
+      type: object
+      properties:
+        params:
+          type: object
+          properties:
+            add_ppu:
+              type: boolean
+            add_ratings:
+              type: integer
+              enum: [0 ,1]
+            bestprice_extrema:
+              type: boolean
+            fetch_variant:
+              type: integer
+            hloc:
+              $ref: '#/components/schemas/Hloc'
+            image_comments:
+              type: integer
+              enum: [0, 1]
+            image_size:
+              type: string
+              default: "n"
+            lang:
+              $ref: '#/components/schemas/Lang'
+            loc:
+              $ref: '#/components/schemas/Loc'
+            merchant_details:
+              type: integer
+              enum: [0, 1]
+            n_offers:
+              type: integer
+            no_strip:
+              type: integer
+              enum: [0, 1]
+            pickup_only:
+              type: integer
+              enum: [0, 1]
+            productvideo:
+              type: integer
+              enum: [0, 1]
+            redir_baseurl:
+              type: integer
+              enum: [0, 1]
+            review_details:
+              type: integer
+              enum: [0, 1]
+            search_ngrams_only:
+              type: integer
+              enum: [0, 1]
+            size:
+              type: array
+              items:
+                default: []
+            t:
+              type: string
+              default: "alle"
+            test_reviews:
+              type: integer
+              enum: [0, 1]
+            v:
+              type: string
+              enum: ["e", "l", "k"]
+              description: |
+                - {no filter}: [`e`]
+                - in stock: [`l`]
+                - short term (up to 4 weekdays): [`k`]
+        query:
+          type: string
+        type:
+          type: string
+          default: "id"
+    ACS:
+      type: array
+      description: "Pay close attention to the object types. IDs are sometimes represented as strings instead of integers. The searchterm has <b></b> wrapped around it."
+      items:
+        type: array
+        items:
+          oneOf:
+            - type: string
+              example: "a1957388.html"
+            - type: string
+              example: "Amazon Echo <b>Input</b> weiß"
+            - type: string
+              example: "//gzhls.at/i/73/88/1957388-n0.jpg"
+            - type: [string, "null"]
+              example: "is_variant"
+            - oneOf:
+              - type: integer
+              - type: string
+              example: 1957388
+        example:
+          - ["a1957388.html", "Amazon Echo <b>Input</b> weiß", "//gzhls.at/i/73/88/1957388-n0.jpg", null, "1957388"]
+          - ["a1957388.html", "Amazon Echo <b>Input</b> weiß", "//gzhls.at/i/73/88/1957388-n0.jpg", null, 1957388]
+          - ["", ""]
+          - ["./?cat=hifizub", "Audio & HiFi > HiFi-Komponenten > Zubehör"]
+    ProductRatingsRes:
+      type: object
+      properties:
+        aggregate_star_rating:
+          type: number
+          default: 4.9
+        external_sources:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              logo_height:
+                type: integer
+              logo_url:
+                type: string
+              logo_width:
+                type: integer
+              name:
+                type: string
+              url:
+                type: string
+        pagination:
+          type: object
+          properties:
+            offset:
+              type: integer
+            page:
+              type: integer
+            pages:
+              type: integer
+            per_page:
+              type: integer
+            total:
+              type: integer
+        per_star_rating_count:
+          type: object
+          additionalProperties:
+            type: integer
+          example:
+            1: 1
+            5: 10
+        product_name:
+          type: string
+        ratings:
+          type: array
+          items:
+            type: object
+            properties:
+              approved:
+                type: integer
+                enum: [0, 1]
+              artikel_id:
+                type: integer
+                description: "translation: article/product id"
+              author:
+                type: [string, "null"]
+              external_source_id:
+                type: [integer, "null"]
+              id:
+                type: integer
+              star_rating:
+                type: number
+                maximum: 5.0
+              text:
+                type: string
+              timestamp:
+                type: string
+                format: date-time
+              title:
+                type: string
+              user_id:
+                type: integer
+        ratings_url:
+          type: string
+        replies:
+          type: [object, "null"]
+          additionalProperties:
+            type: array
+            items:
+              type: object
+              properties:
+                approved:
+                  type: integer
+                author:
+                  type: string
+                id: 
+                  type: integer
+                plonk:
+                  type: integer
+                  enum: [0, 1]
+                supersededby:
+                  type: integer
+                text:
+                  type: string
+                timestamp:
+                  type: string
+                  format: date-time
+                title:
+                  type: string
+                user_id:
+                  type: string
+        seo_url:
+          type: string
+        star_rating_best:
+          type: number
+          maximum: 5.0
+        top_rated_variant_products:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              name:
+                type: string
+              name_without_variant:
+                type: string
+              rating_mean:
+                type: number
+                default: 4.9456
+              rating_total: 
+                type: integer
+              seo_url:
+                type: string
+              short_name:
+                type: string
+        total_ratings:
+          type: integer
+        total_star_ratings:
+          type: integer
+    ProductRatingsReq:
+      type: object
+      properties:
+        filter_ghonly:
+          type: integer
+          enum: [0, 1]
+        offset:
+          type: integer
+        pagesize:
+          type: integer
+        params:
+          type: object
+          properties:
+            comments:
+              type: boolean
+        product_id:
+          type: integer
+        sort:
+          type: string
+          enum: ["latest", "bew", "-bew"]
+          description: |
+            - latest: [`latest`]
+            - highest rating [`bew`]
+            - highest rating [`-bew`]
+    WishlistProduct:
+      type: object
+      properties:
+        best_avl:
+          $ref: '#/components/schemas/BestAvl'
+        best_price:
+          type: number
+          default: 99.99
+        bpoffer_link:
+          type: string
+        category:
+          $ref: '#/components/schemas/Category'
+        ctime:
+          type: integer
+        currency:
+          type: string
+          default: "EUR"
+        gtin:
+          type: array
+          items:
+            type: string
+        gzhid:
+          type: integer
+        has_active_pricealarm:
+          type: integer
+          enum: [0, 1]
+        image:
+          type: [array, "null"]
+          items:
+            type: string
+        listed_since:
+          type: string
+        manufacturer_id:
+          description: Can be an integer or a string
+        manufacturer_name:
+          type: string
+        mpn:
+          type: string
+        offer_count:
+          type: integer
+        popularity:
+          type: integer
+        ppu:
+          $ref: '#/components/schemas/PPU'
+        pricing:
+          $ref: '#/components/schemas/Pricing'
+        product:
+          type: string
+        product_for_sort:
+          type: string
+        product_long:
+          type: string
+        product_short:
+          type: string
+        quantity:
+          type: integer
+        rating_percent:
+          type: [number, "null"]
+          default: 99.99
+        rating_comments:
+          type: [integer, "null"]
+        rating_count:
+          type: [integer, "null"]
+        rating_stars:
+          type: [number, "null"]
+          default: 4.8
+        unit_price:
+          type: number
+          default: 99.99
+        urls:
+          type: object
+          properties:
+            manufacturer:
+              type: string
+            offers:
+              type: string
+            overview:
+              type: string
+            pricehist:
+              type: string
+            rate:
+              type: string
+            reviews:
+              type: string
+        variant_count:
+          type: integer
+        variant_id:
+          description: Can be an integer or a string
+          oneOf:
+            - type: string
+            - type: integer
+    LocalWishlistRes:
+      type: object
+      properties:
+        response:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              contender:
+                type: [string, "null"]
+                description: "a string formatted json body looking like Schema: WishlistContender"
+                example: "{\"contents\":{\"1234567\":1},\"hloc\":[\"at\"],\"id\":\"\\\"35456ce6-3a62-4a9b-8255-e1c8f340d4e4\\\"\",\"loc\":\"at\",\"price\":99.99,\"signature\":\"1abade3ff75e76c736e2b78642802388\",\"title\":\"&quot;35456ce6-3a62-4a9b-8255-e1c8f340d4e4&quot;\"}"
+              contents:
+                type: object
+                additionalProperties:
+                  type: integer
+                  enum: [0, 1]
+              image:
+                type: string
+              ordered_contents:
+                type: array
+                items:
+                  type: integer
+              ordered_products:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WishlistProduct'
+              pricing:
+                description: "LOOOL"
+                type: object
+                properties:
+                  eur_value:
+                    type: number
+                    default: 99.99
+                  loc_currency:
+                    type: string
+                    default: "EUR"
+                  loc_value:
+                    type: [number, "null"]
+                    default: 99.99
+                  orig_currency:
+                    type: [string, "null"]
+                    default: "EUR"
+                  orig_value:
+                    type: [number, "null"]
+                    default: 99.99
+                  pricing:
+                    type: object
+                    properties:
+                      eur_value:
+                        type: number
+                        default: 99.99
+                      loc_currency:
+                        type: string
+                        default: "EUR"
+                      loc_value:
+                        type: number
+                        default: 99.99
+                      orig_currency:
+                        type: string
+                        default: "EUR"
+                      orig_value:
+                        type: number
+                        default: 99.99
+              products:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WishlistProduct'
+              storage:
+                type: string
+                default: "cookie"
+              title:
+                type: [string, "null"]
+                description: "typically an uuid encapsulated in escaped quotes"
+              total_product_count:
+                type: integer
+                enum: [0, 1]
+              u_total_price:
+                type: number
+                default: 99.99
+              unique_product_count:
+                type: integer
+                enum: [0, 1]
+    WishlistContender:
+      type: object
+      properties:
+        contents:
+          type: object
+          additionalProperties:
+            type: string
+        hloc:
+          $ref: '#/components/schemas/Hloc'
+        id:
+          type: string
+        loc:
+          $ref: '#/components/schemas/Loc'
+        price:
+          type: number
+          default: 99.99
+        signature:
+          type: string
+        title:
+          type: string
+    LocalWishlistReq:
+      type: object
+      properties:
+        hloc:
+          $ref: '#/components/schemas/Hloc'
+        loc:
+          $ref: '#/components/schemas/Loc'
+        params:
+          type: object
+          properties:
+            lang:
+              $ref: '#/components/schemas/Lang'
+        wishlists:
+          type: object
+          additionalProperties:
+            type: string
+    CompareProductsRes:
+      type: object
+      properties:
+        response:
+          type: array
+          items:
+            type: object
+            properties:
+              cat:
+                type: string
+              catname:
+                type: string
+              danube:
+                type: integer
+              id:
+                type: integer
+              image:
+                type: string
+              links:
+                type: object
+                properties:
+                  product:
+                    type: string
+                  remove:
+                    type: string
+              mfs:
+                type: [string, "null"]
+              name:
+                type: string
+              offers:
+                type: integer
+              price:
+                type: string
+                default: "<span class=\"gh_price\">€ 99,99</span>"
+              price_raw:
+                type: number
+                default: 99.99
+              pricing:
+                $ref: '#/components/schemas/Pricing'
+              properties:
+                type: array
+                items:
+                  type: string
+              propvalues:
+                type: array
+                items:
+                  type: string
+              rating:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                  rate_perc:
+                    type: integer
+                  rate_val:
+                    type: number
+                    default: 99.89
+                  rate_val_str:
+                    type: string
+                    description: "rounded to one decimal"
+                    default: "99.9"
+              share_url:
+                type: string
+    CompareProductsReq:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: integer
+        params:
+          type: object
+          properties:
+            hloc:
+              $ref: '#/components/schemas/Hloc'
+            lang:
+              $ref: '#/components/schemas/Lang'
+            loc:
+              $ref: '#/components/schemas/Loc'
+    EditPriceAlarmRes:
+      type: object
+      properties:
+        response:
+          type: object
+          properties:
+            message:
+              type: string
+            success:
+              type: integer
+              enum: [0, 1]
+    DeletePriceAlarmReq:
+      type: object
+      properties:
+        device_id:
+          type: string
+    UpdatePriceAlarmReq:
+      type: object
+      properties:
+        availability:
+          type: string
+          default: "l"
+        currency:
+          type: string
+          default: "EUR"
+        device_id:
+          type: string
+        expiry_days:
+          type: integer
+        loc:
+          $ref: '#/components/schemas/Loc'
+        marketplaces:
+          type: integer
+          enum: [0, 1]
+        merchants_from:
+          type: array
+          items:
+            type: string
+            default: "at"
+        price_limit:
+          type: number
+          default: 99.99
+        shipping_included:
+          type: integer
+          enum: [0, 1]
+        token:
+          type: string
+        email_address:
+          type: string
+        push_notification:
+          type: integer
+          enum: [0, 1]
+        mail_notification:
+          type: integer
+          enum: [0, 1]
+    NewPriceAlarmReq:
+      type: object
+      properties:
+        availability:
+          type: string
+          default: "l"
+        currency:
+          type: string
+          default: "EUR"
+        device_id:
+          type: string
+        expiry_days:
+          type: integer
+        loc:
+          $ref: '#/components/schemas/Loc'
+        marketplaces:
+          type: integer
+          enum: [0, 1]
+        merchants_from:
+          type: array
+          items:
+            type: string
+            default: "at"
+        price_limit:
+          type: number
+          default: 99.99
+        shipping_included:
+          type: integer
+          enum: [0, 1]
+        token:
+          type: string
+    PriceHistoryReq:
+      type: object
+      properties:
+        id:
+          type: integer
+        params:
+          type: object
+          properties:
+            days:
+              type: integer
+            hloc:
+              $ref: '#/components/schemas/Hloc'
+            loc:
+              $ref: '#/components/schemas/Loc'
+    PriceHistoryRes:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            current_best:
+              type: number
+              default: 99.99
+            first_ts:
+              type: [integer, "null"]
+            last_formatted:
+              type: [string, "null"]
+            last_ts:
+              type: [integer, "null"]
+            max:
+              type: [number, "null"]
+              default: 120.5
+            min:
+              type: [number, "null"]
+              default: 90.05
+        response:
+          type: array
+          items:
+            type: array
+            items:
+              oneOf:
+              - type: integer
+                default: 123456800000
+              - type: number
+                default: 98.50
+              - type: integer
+                default: 1
+            minItems: 3
+            maxItems: 3
+    CategoryListRes:
+      type: object
+      properties:
+        response:
+          type: object
+          properties:
+            count:
+              type: integer
+            deals:
+              $ref: '#/components/schemas/DealsType1'
+            default_currency:
+              type: string
+            filters:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  type:
+                    type: string
+                  values:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        count:
+                          type: integer
+                        id:
+                          type: string
+                        name:
+                          type: string
+                  visible:
+                    type: [integer, "null"]
+                    enum: [1, null]
+            is_default_hloc:
+              type: boolean
+            metadata:
+              type: [object, "null"]
+              properties:
+                path:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: object
+                        properties:
+                          m:
+                            type: integer
+                      label:
+                        type: string
+                thumbs:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                    width:
+                      type: integer
+                    height:
+                      type: integer
+            metascore:
+              type: [object, "null"]
+              properties:
+                count:
+                  type: object
+                  additionalProperties:
+                    type: string
+                score:
+                  type: object
+                  additionalProperties:
+                    type: string
+            price_range:
+              type: [object, "null"]
+              properties:
+                max:
+                  type: number
+                  default: 1000.05
+                min:
+                  type: number
+                  default: 15.05
+            products:
+              type: array
+              items:
+                $ref: '#/components/schemas/Product'
+            total:
+              type: integer
+            user_known_location:
+              type: string
+            variants:
+              type: [object, "null"]
+              additionalProperties:
+                type: string
+    Product:
+      type: object
+      properties:
+        best_avl:
+          $ref: '#/components/schemas/BestAvl'
+        best_deep_link:
+          type: string
+        best_merch_loc:
+          type: string
+          default: "at"
+        best_merch_name:
+          type: string
+        best_price:
+          type: number
+          default: 99.99
+        hname:
+          type: string
+        id:
+          type: integer
+        image_m:
+          type: string
+        image_n:
+          type: string
+        image_thumb:
+          type: string
+        image_thumb_2x:
+          type: string
+        mpn:
+          type: [string, "null"]
+        offer_count:
+          type: integer
+        product:
+          type: string
+        product_link:
+          type: string
+        rating_comments:
+          type: [integer, "null"]
+        rating_count:
+          type: [integer, "null"]
+        rating_percent:
+          type: [number, "null"]
+          default: 99.99
+        rating_stars:
+          type: [number, "null"]
+          default: 4.8
+        vk:
+          type: [number, "null"]
+          default: 99.99
+        description:
+          $ref: '#/components/schemas/Description'
+        timestamp:
+          type: string
+          description: "human readable"
+    CategoryListReq:
+      type: object
+      properties:
+        category:
+          type: string
+        params:
+          type: object
+          properties:
+            add_metadata:
+              type: boolean
+            asd:
+              type: integer
+            asuch:
+              type: string
+            bpmax:
+              type: number
+              default: 25000.01
+            bpmin:
+              type: number
+              default: 0.1
+            deals_as_array:
+              type: integer
+            hide_deals:
+              type: integer
+            hloc:
+              $ref: '#/components/schemas/Hloc'
+            lang:
+              $ref: '#/components/schemas/Lang'
+            loc:
+              $ref: '#/components/schemas/Loc'
+            offset:
+              type: integer
+            omit_description:
+              type: integer
+            page_size:
+              type: integer
+            price_range:
+              type: integer
+            reverse_order:
+              type: integer
+            sort:
+              type: string
+              enum: ["artikel", "eintr", "p", "t", "bew", "nbew", "lz", "r", "n", "m"]
+              description: |
+                - alphabetical: [`artikel`]
+                - amount of offers: [`eintr`]
+                - best price: [`p`]
+                - popularity: [`t`]
+                - rating: [`bew`]
+                - number of ratings: [`nbew`]
+                - delivery time: [`lz`]
+                - price per unit: [`r`]
+                - release date: [`n`]
+                - testreports: [`m`]
+            t:
+              type: string
+              default: "alle"
+            v:
+              type: string
+              enum: ["e", "l", "k"]
+              description: |
+                - {no filter}: [`e`]
+                - in stock: [`l`]
+                - short term (up to 4 weekdays): [`k`]
+            vl:
+              type: string
+              default: "at"
+            xf:
+              type: string
+    NewProductsRes:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              timestamp:
+                type: string
+                description: "human readable"
+              title:
+                type: string
+              best_deep_link:
+                type: string
+              best_price:
+                type: number
+                default: 99.99
+              description:
+                $ref: '#/components/schemas/Description'
+              cat:
+                type: string
+              rating_info:
+                type: [string, "null"]
+              loc_best_price:
+                type: object
+                properties:
+                  currency:
+                    type: string
+                  value:
+                    type: number
+                    default: 99.99
+              offer_count:
+                type: integer
+              id:
+                type: integer
+              best_avl:
+                $ref: '#/components/schemas/BestAvl'
+              pix_s_url:
+                type: string
+              pix_n_url:
+                type: string
+              hname:
+                type: string
+    NewProductsReq:
+      type: object
+      properties:
+        lang:
+          $ref: '#/components/schemas/Lang'
+        limit:
+          type: integer
+        loc:
+          $ref: '#/components/schemas/Loc'
+        params:
+          type: object
+          properties:
+            hloc:
+              $ref: '#/components/schemas/Hloc'
+    BestPriceDevelRes:
+      type: object
+      properties:
+        response:
+          type: object
+          properties:
+            merchants:
+              type: array
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  id:
+                    type: string
+                  count:
+                    type: integer
+            boundary_filters:
+              type: [object, "null"]
+              properties:
+                drop_euro:
+                  type: object
+                  properties:
+                    min_boundary:
+                      type: integer
+                    max_boundary:
+                      type: integer
+                drop_percent:
+                  type: object
+                  properties:
+                    min_boundary:
+                      type: integer
+                    max_boundary:
+                      type: integer
+            total:
+              type: integer
+            deals:
+              type: array
+              items:
+                type: object
+                properties:
+                  manufacturer_name:
+                    type: string
+                  manufacturer_id:
+                    description: Can be an integer or a string
+                  cat:
+                    type: string
+                  image_thumb:
+                    type: string
+                  category_path:
+                    type: string
+                  rating_percent:
+                    type: [number, "null"]
+                    default: 99.99
+                  best_price:
+                    type: number
+                    default: 99.99
+                  middle_category_name:
+                    type: string
+                  middle_category_id:
+                    type: integer
+                  h_id:
+                    type: integer
+                  old_price:
+                    type: number
+                    default: 99.99
+                  cat_name:
+                    type: string
+                  hname:
+                    type: string
+                  top_category_id:
+                    type: integer
+                  top_category_name:
+                    type: string
+                  rating_comments:
+                    type: [integer, "null"]
+                  id:
+                    type: integer
+                  rating_count:
+                    type: [integer, "null"]
+                  best_avl:
+                    $ref: '#/components/schemas/BestAvl'
+                  offer_count:
+                    type: integer
+                  top_deal:
+                    type: integer
+                  description:
+                    $ref: '#/components/schemas/Description'
+                  product:
+                    type: string
+                  merchant_logo:
+                    type: [string, "null"]
+                  alltime_best:
+                    type: integer
+                  rating_stars:
+                    type: [number, "null"]
+                    default: 4.8
+                  best_deep_link:
+                    type: string
+                  rank:
+                    type: integer
+                  change_in_local:
+                    type: number
+                    default: -10.50
+                  change_in_percent:
+                    description: Can be an integer or a float
+                  timestamp:
+                    type: integer
+                    description: "unix epoch"
+                  ppu:
+                    $ref: '#/components/schemas/PPU'
+            items_on_page:
+              type: integer
+            categories:
+              type: object
+              properties:
+                cat:
+                  type: object
+                  additionalProperties:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      name:
+                        type: string
+                  example:
+                    spradschblech:
+                      name: "Schutzbleche"
+                      count: 1
+                    spzglego:
+                      name: "LEGO"
+                      count: 21
+                    spzghrsp:
+                      name: "Hörspiele"
+                      count: 5
+                top:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      key:
+                        type: string
+                      children:
+                        type: array
+                        items:
+                          type: string
+                      name:
+                        type: string
+                      count:
+                        type: integer
+                o:
+                  type: object
+                  additionalProperties:
+                    type: object
+                    properties:
+                      count:
+                        type: integer
+                      children:
+                        type: array
+                        items:
+                          type: string
+                      name:
+                        type: string
+                  example:
+                    2:
+                      count: 2
+                      name: Systeme
+                      children: ["sysdiv"]
+            price_range:
+              type: [object, "null"]
+              properties:
+                min:
+                  type: integer
+                max:
+                  type: integer
+            pager:
+              type: object
+              properties:
+                first_page:
+                  type: integer
+                last_page:
+                  type: integer
+                next_page:
+                  type: integer
+            manufacturer:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    description: "Can be an integer or a string"
+                  name:
+                    type: string
+                  count:
+                    type: integer
+    BestPriceDevelReq:
+      type: object
+      properties:
+        params:
+          type: object
+          properties:
+            cat:
+              type: string
+              default: hdssd
+            drop_euromax:
+              type: integer
+            drop_euromin:
+              type: integer
+            drop_percentmax:
+              type: integer
+            drop_percentmin:
+              type: integer
+            h_id:
+              type: [integer, "null"]
+              default: null
+              description: "Shop/Merchant id"
+            hloc:
+              $ref: '#/components/schemas/Hloc'
+            interval:
+              type: string
+              examples:
+                - "7d"
+                - "31d"
+                - "93d"
+            limit:
+              type: integer
+            loc:
+              $ref: '#/components/schemas/Loc'
+            m:
+              type: [integer, "null"]
+              description: "Top-level category id. Leave as none if you want to filter after sub-categories."
+            mfc:
+              type: [integer, "null"]
+              description: "Manufacturer id. Example: 1017 (Apple)"
+            n_offers:
+              type: integer
+            o:
+              type: [integer, "null"]
+              description: "Sub category id. Leave as none if you want to filter after the lowest category level."
+            pg:
+              type: integer
+              default: 1
+            price_range:
+              type: integer
+            pricemax:
+              type: integer
+            pricemin:
+              type: integer
+            sort:
+              type: string
+              enum: ["t", "c", "p", "-p", "pp"]
+              description: |
+                - popularity [`t`]
+                - topicality: [`c`]
+                - best price ascending: [`p`]
+                - best price descending: [`-p`]
+                - percentage: [`pp`]
+            top_deal:
+              type: boolean
+              description: "Only show products that are available at a rock-bottom price and currently offer particularly high savings compared to other products in their respective category. NEVER ACTIVATE THIS AND alltime_best AT THE SAME TIME."
+              default: false
+            alltime_best:
+              type: boolean
+              description: "Only show products that have never been cheaper since they were listed on Geizhals. NEVER ACTIVATE THIS AND top_deal AT THE SAME TIME."
+              default: false
+            v:
+              type: integer
+              enum: [0, 2, 1]
+              description: |
+                - {no filter}: [`0`]
+                - in stock: [`2`]
+                - short term (up to 4 weekdays): [`1`]
+    TopProductsRes:
+      type: object
+      properties:
+        response:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  best_avl:
+                    $ref: '#/components/schemas/BestAvl'
+                  rating_count:
+                    type: [string, "null"]
+                  image: 
+                    $ref: "#/components/schemas/Image"
+                  longname:
+                    type: string
+                  count:
+                    type: integer
+                  product_name:
+                    type: string
+                  stars_value:
+                    type: [integer, "null"]
+                  best_price:
+                    type: number
+                    default: 99.99
+                  category_name:
+                    type: string
+                  seo_url:
+                    type: string
+                    default: "{product_name}-{product_id}.html"
+                  mpn:
+                    type: [string, "null"]
+                  category:
+                    type: string
+                  best_price_el:
+                    type: string
+                    default: "<span class=\"gh_price\">€{price}</span>"
+                  image_medium:
+                    $ref: "#/components/schemas/Image"
+    TopProductsReq:
+      type: object
+      properties:
+        hloc:
+          $ref: '#/components/schemas/Hloc'
+        itemcount:
+          type: integer
+        lang:
+          $ref: '#/components/schemas/Lang'
+        loc:
+          $ref: '#/components/schemas/Loc'
+    ProductsDetailsRes:
+      type: object
+      properties:
+        response:
+          type: array
+          items:
+            type: object
+            properties:
+              ctime:
+                type: integer
+              pricing:
+                $ref: '#/components/schemas/Pricing'
+              name:
+                type: string
+              images:
+                type: [array, "null"]
+                items:
+                  type: string
+                  default: "https://gzhls.at/{...}.jpg"
+              deals:
+                $ref: '#/components/schemas/DealsType0'
+              offer_count:
+                type: integer
+              id:
+                type: integer
+              best_avl:
+                $ref: '#/components/schemas/BestAvl'
+              best_price:
+                type: [object, "null"]
+                properties:
+                  value:
+                    type: number
+                    default: 99.9
+                  currency:
+                    type: string
+                    default: "EUR"
+                  worst:
+                    type: number
+                    default: 199.99
+    ProductsDetailsReq:
+      type: object
+      properties:
+        id:
+          type: array
+          items:
+            type: integer
+        params:
+          type: object
+          properties:
+            availability:
+              type: integer
+              default: 1
+            hloc:
+              $ref: '#/components/schemas/Hloc'
+            images:
+              type: integer
+            loc:
+              $ref: '#/components/schemas/Loc'
+            order:
+              type: integer
+              default: 2
+    CategoriesReq:
+      type: object
+      properties:
+        params:
+          type: object
+          properties:
+            lang:
+              $ref: '#/components/schemas/Lang'
+    TopCategoriesReq:
+      type: object
+      properties:
+        lang:
+          $ref: '#/components/schemas/Lang'
+        limit:
+          type: integer
+        loc:
+          $ref: '#/components/schemas/Loc'
+        params:
+          type: object
+          properties:
+            image_size:
+              type: string
+              enum: ["r"]
+    CategoriesRes:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: object
+                properties:
+                  m:
+                    type: integer
+              title:
+                type: string
+              thumb:
+                type: string
+              childs:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    thumb:
+                      type: string
+                    title:
+                      type: string
+                    id:
+                      type: object
+                      properties:
+                        o:
+                          type: integer
+                    childs:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: object
+                            properties:
+                              cat:
+                                type: string
+                          thumb:
+                            type: string
+                          childs:
+                            type: [array, "null"]
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: object
+                                  properties:
+                                    xf:
+                                      type: [string, "null"]
+                                    cat:
+                                      type: string
+                                title:
+                                  type: string
+                          new_filters:
+                            type: boolean
+                            default: false
+                          title:
+                            type: string
+                          popular:
+                            type: [boolean, "null"]
+    TopCategoriesRes:
+      type: object
+      properties:
+        response:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopCategory'
+    TopCategory:
+      type: array
+      items:
+        oneOf:
+          - type: object
+            properties:
+              id:
+                type: object
+                properties:
+                  m:
+                    type: integer
+              label:
+                type: string
+          - type: [object, "null"]
+            properties:
+              id:
+                type: object
+                properties:
+                  o:
+                    type: integer
+              label:
+                type: string
+          - type: [object, "null"]
+            properties:
+              id:
+                type: object
+                properties:
+                  cat:
+                    type: string
+              label:
+                type: string
+              thumbs:
+                type: [object, "null"]
+                properties:
+                  height:
+                    type: integer
+                  url:
+                    type: string
+                  width:
+                    type: integer
+    Forbidden:
+      description: Bearer token is invalid
+      type: object
+      properties:
+        code:
+          type: integer
+          enum: [403]
+        error:
+          type: string
+          enum: ["invalid jwt", "Authentication failed"]
+        retry:
+          type: boolean
+          default: false
+      required:
+        - code
+        - error
+    PriceAlarm:
+      type: object
+      properties:
+        response:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              agent_id:
+                type: integer
+              artikel_id:
+                type: integer
+                description: "translation: article/product id"
+              availability:
+                type: string
+                default: "l"
+              base_url:
+                type: [string, "null"] 
+              ctime:
+                type: string
+                format: date-time
+              ctime_epoch:
+                type: integer
+              currency:
+                type: string
+                default: "EUR"
+              days:
+                type: integer
+              default_loc:
+                type: string
+                default: "at"
+              endtime:
+                type: string
+                format: date-time
+              endtime_epoch:
+                type: string
+              expiry_days:
+                type: integer
+              hloc:
+                $ref: '#/components/schemas/Hloc'
+              including_delivery:
+                type: integer
+                enum: [0, 1]
+              language:
+                type: string
+                default: "de"
+              lmerchant:
+                type: [string, "null"] 
+              loc:
+                $ref: '#/components/schemas/Loc'
+              lpreis:
+                type: [string, "null"]
+                description: "translation: price"
+              mail:
+                type: string
+              mail_notification:
+                type: integer
+                enum: [0, 1]
+              marketplaces:
+                type: integer
+                enum: [0, 1]
+              merchant_exclude:
+                # TODO: find type of this var
+                description: "unknown type"
+              merchant_exclude_mask:
+                type: integer
+              minpreis:
+                type: number
+                description: "translation: min price"
+                default: 99.99
+              notification_type:
+                type: array
+                items:
+                  type: string
+                  description: "p: push-notif"
+                  enum: ["p"]
+              pricealarm_id:
+                type: integer
+              products:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    best_price:
+                      type: object
+                      properties:
+                        currency:
+                          type: string
+                          default: "EUR"
+                        value:
+                          type: number
+                          default: 99.99
+                        worst:
+                          type: integer
+                    ctime:
+                      type: integer
+                    deals:
+                      $ref: '#/components/schemas/DealsType0'
+                    id:
+                      type: integer
+                    images:
+                      type: array
+                      items:
+                        type: string
+                    name:
+                      type: string
+                    name_encoded:
+                      type: string
+                    offer_count:
+                      type: integer
+                    pricing:
+                      $ref: '#/components/schemas/Pricing'
+              push_notification:
+                type: integer
+                enum: [0, 1]
+              push_notification_details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    active:
+                      type: boolean
+                    device_id:
+                      type: string
+                    token:
+                      type: string
+              size:
+                type: "null"
+              valid:
+                type: integer
+                enum: [0, 1]
+              variant_id:
+                description: Can be an integer or a string
+                oneOf:
+                  - type: string
+                  - type: integer
+                  - type: "null"
+              wl_contents:
+                type: "null"
+              wl_id:
+                type: "null"
+              wl_owner:
+                type: "null"
+              wl_title:
+                type: "null"
+              wl_url:
+                type: "null"
+              xf:
+                type: "null"
+    PushNotificationSettingsRes:
+      type: object
+      properties:
+        response:
+          type: object
+          properties:
+            push_notification_settings_public:
+              type: object
+              properties:
+                type:
+                  type: array
+                  items:
+                    type: string
+                    enum: ["em", "pa"]
+                  example:
+                    ["em", "pa"]
+            success:
+              type: integer
+              enum: [0, 1]
+    Category:
+      type: array
+      items:
+        oneOf:
+          - type: object
+            properties:
+              id:
+                type: object
+                properties:
+                  m:
+                    type: integer
+                required:
+                  - m
+              label:
+                type: string
+          - type: object
+            properties:
+              id:
+                type: object
+                properties:
+                  o:
+                    type: integer
+                required:
+                  - o
+              label:
+                type: string
+          - type: object
+            properties:
+              id:
+                type: object
+                properties:
+                  cat:
+                    type: string
+                required:
+                  - cat
+              label:
+                type: string

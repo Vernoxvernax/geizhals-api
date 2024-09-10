@@ -5,8 +5,10 @@ apis:
 extends:
   - recommended
 rules:
-  no-unused-components: error
+  no-unused-components: off # For some of the string formatted json schemas
   no-server-example.com: off
+  security-defined: off # ACS not using any authentication
+  no-ambiguous-paths: off # Since '/usercontent/v0/pricealarm/{id}/enable' and '/usercontent/v0/pricealarm/product/{id}' exist
 theme:
   openapi:
     htmlTemplate: ./docs/index.html
