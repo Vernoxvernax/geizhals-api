@@ -71,6 +71,8 @@ Obviously this isn't how Geizhals's mobile apps work. Otherwise you wouldn't be 
 You can make of this information what you want, but this hint is already very blatant.
 
 > [!CAUTION]
-> As you can tell, I've put a little effort into hiding the secret. If you plan to create your own repository on the internet, I urge you to either mask *it* in your own way (not just base64 encode/one-way hashing), or to just leave it out entirely. I do NOT want shortsighted script-kiddies DDoS-ing Geizhals, nor do I want the team to find *it* and end up locking down their api even more. **Be smart.**
+> ~~As you can tell, I've put a little effort into hiding the secret. If you plan to create your own repository on the internet, I urge you to either mask *it* in your own way (not just base64 encode/one-way hashing), or to just leave it out entirely. I do NOT want shortsighted script-kiddies DDoS-ing Geizhals, nor do I want the team to find *it* and end up locking down their api even more. **Be smart.**~~
+
+Well someone appears to have shamelessly uploaded it on github.
 
 Here is a small proof-of-concept Geizhals api-library: https://github.com/Vernoxvernax/geizhals-api-rs
