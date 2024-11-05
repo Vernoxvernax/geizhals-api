@@ -9,6 +9,7 @@ rules:
   no-server-example.com: off
   security-defined: off # ACS not using any authentication
   no-ambiguous-paths: off # Since '/usercontent/v0/pricealarm/{id}/enable' and '/usercontent/v0/pricealarm/product/{id}' exist
+  no-path-trailing-slash: off # Official clients call '/usercontent/v0/push_notification/'
 theme:
   openapi:
     htmlTemplate: ./docs/index.html

@@ -271,6 +271,40 @@ paths:
                 $ref: '#/components/schemas/Forbidden'
       security:
         - bearerAuth: []
+  /usercontent/v0/push_notification/:
+    post:
+      tags:
+        - Usercontent
+      summary: Create a push notification? Usually only in the context of a logged in user.
+      operationId: "createPushNotification"
+      description: Todo
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushNotificationReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a EditPriceAlarmRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EditPriceAlarmRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
   /usercontent/v0/push_notification/settings:
     get:
       tags:
