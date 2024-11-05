@@ -12,6 +12,39 @@ info:
 servers:
   - url: https://api.geizhals.net
 paths:
+  /oauth2/login:
+    get:
+      tags:
+        - OAuth
+      summary: Login using email and password.
+      operationId: "login"
+      parameters:
+        - name: user-agent
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LoginReq'
+      responses:
+        '200':
+          description: Operation successful. Returning a LoginRes object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginRes'
+        '403':
+          description: Forbidden - Authentication or Authorization Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+      security:
+        - bearerAuth: []
   /usercontent/v0/pricealarm:
     get:
       tags:
@@ -895,6 +928,31 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    LoginRes:
+      type: object
+      properties:
+        state:
+          type: [string, "null"]
+          enum: ["verified"]
+        status:
+          type: string
+          enum: ["ok", "failed"]
+        token:
+          description: "A bearer token to authorize user-requests. No need to reverse engineer this one."
+          type: [string, "null"]
+        error:
+          type: [string, "null"]
+          default: "invalid_credentials"
+    LoginReq:
+      type: object
+      properties:
+        client_id:
+          type: string
+          default: "mobileapp-2021-android"
+        email:
+          type: string
+        password:
+          type: string
     Hloc:
       type: array
       items:

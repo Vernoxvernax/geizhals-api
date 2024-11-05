@@ -13,7 +13,7 @@ A Bearer token usually consists of two base64 encoded strings and a signature. I
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEyMzQ1Njc4OSwiaWF0IjoxMjM0NTY3ODksInJlcXVlc3RfZmluZ2VycHJpbnQiOiJ3aGF0c3RoaXM_IiwidGltZXN0YW1wIjoxMjM0NTY3OTAsInRva2VuX2lkIjoibW9iaWxlYXBwLTIwMjEtYW5kcm9pZCJ9.IxdEXmgDi5LUTTLz4BHNdohZb6D5vB3LvDr5rRmm8R0
 ```
 
-The three parts are always seperated by a full stop `.`:
+The three parts are always separated by a full stop `.`:
 ___
 `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9`:
 ```
