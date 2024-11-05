@@ -65,11 +65,11 @@ paths:
             type: string
       responses:
         '200':
-          description: Operation successful. Returning a PriceAlarm object.
+          description: Operation successful. Returning a PriceAlarmRes object.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PriceAlarm'
+                $ref: '#/components/schemas/PriceAlarmRes'
         '403':
           description: Forbidden - Authentication or Authorization Failed
           content:
@@ -592,7 +592,7 @@ paths:
     post:
       tags:
         - Products
-      summary: Get compact information about a specific product
+      summary: Get compact information about specific products
       operationId: "getProductDetails"
       description: Todo
       parameters:
@@ -986,17 +986,22 @@ components:
         type: object
         properties:
           alltime_best:
-            type: integer
+            type: [integer, object, "null"]
+            description: Can also be an object when null.
             enum: [0, 1]
           change_percent:
-            type: integer
+            type: [integer, object, "null"]
+            description: Can also be an object when null.
             default: -1
           old_price:
-            type: string
+            type: [string, object, "null"]
+            description: Can also be an object when null.
           product_id:
-            type: integer
+            type: [integer, object, "null"]
+            description: Can also be an object when null.
           top_deal:
-            type: integer
+            type: [integer, object, "null"]
+            description: Can also be an object when null.
             enum: [0, 1]
     Image:
       type: [object, "null"]
@@ -1154,14 +1159,14 @@ components:
                     type: [object, "null"]
                     properties:
                       city:
-                        type: string
+                        type: [string, "null"]
                       country:
                         type: [string, "null"]
                         default: "A"
                       street:
-                        type: string
+                        type: [string, "null"]
                       zip:
-                        type: string
+                        type: [string, "null"]
                   agb_link:
                     type: [string, "null"]
                   clean_baseurl:
@@ -1790,13 +1795,17 @@ components:
                 - relevance: [``]
                 - best price - ascending: [`p`]
                 - best price - descending: [`-p`]
-    TogglePriceAlarmReq:
+    PriceAlarmInfo:
       type: object
       properties:
         device_id:
           type: string
         token:
           type: string
+    TogglePriceAlarmReq:
+      $ref: '#/components/schemas/PriceAlarmInfo'
+    PushNotificationReq:
+      $ref: '#/components/schemas/PriceAlarmInfo'
     QueryProductRes:
       type: object
       properties:
@@ -1814,7 +1823,11 @@ components:
               type: boolean
             add_ratings:
               type: integer
-              enum: [0 ,1]
+              enum: [0, 1]
+            amazon_prime:
+              type: integer
+              default: 1
+              enum: [0, 1]
             bestprice_extrema:
               type: boolean
             fetch_variant:
@@ -2515,6 +2528,8 @@ components:
                   visible:
                     type: [integer, "null"]
                     enum: [1, null]
+                  selected_title:
+                    type: [string, "null"]
             is_default_hloc:
               type: boolean
             metadata:
@@ -2590,6 +2605,8 @@ components:
           default: 99.99
         hname:
           type: string
+        ppu:
+          type: [number, "null"]
         id:
           type: integer
         image_m:
@@ -2695,6 +2712,12 @@ components:
               default: "at"
             xf:
               type: string
+            plz:
+              type: string
+              description: "Filter shop location to postal code or city name f.e. [`Berlin`]"
+            dist:
+              type: integer
+              description: "Postal code / city name distance to shop in kilometers. Default: [`50`]"
     NewProductsRes:
       type: object
       properties:
@@ -3032,7 +3055,7 @@ components:
           type: object
           properties:
             items:
-              type: array
+              type: [array, "null"]
               items:
                 type: object
                 properties:
@@ -3291,7 +3314,7 @@ components:
       required:
         - code
         - error
-    PriceAlarm:
+    PriceAlarmRes:
       type: object
       properties:
         response:
