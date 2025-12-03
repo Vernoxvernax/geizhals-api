@@ -1,4 +1,4 @@
-openapi: 3.1.0
+openapi: 3.1.1
 info:
   title: Geizhals/Skinflint API
   description: |-
@@ -1927,26 +1927,34 @@ components:
       type: array
       description: "Pay close attention to the object types. IDs are sometimes represented as strings instead of integers. The searchterm has <b></b> wrapped around it."
       items:
-        type: array
-        items:
-          oneOf:
-            - type: string
-              example: "a1957388.html"
-            - type: string
-              example: "Amazon Echo <b>Input</b> weiß"
-            - type: string
-              example: "//gzhls.at/i/73/88/1957388-n0.jpg"
-            - type: [string, "null"]
-              example: "is_variant"
-            - oneOf:
-              - type: integer
+        oneOf:
+          - type: array
+            description: "Product result with 5 elements: URL, title, image URL, variant flag, and product ID"
+            prefixItems:
               - type: string
-              example: 1957388
-        example:
-          - ["a1957388.html", "Amazon Echo <b>Input</b> weiß", "//gzhls.at/i/73/88/1957388-n0.jpg", null, "1957388"]
-          - ["a1957388.html", "Amazon Echo <b>Input</b> weiß", "//gzhls.at/i/73/88/1957388-n0.jpg", null, 1957388]
-          - ["", ""]
-          - ["./?cat=hifizub", "Audio & HiFi > HiFi-Komponenten > Zubehör"]
+                description: "Product URL"
+              - type: string
+                description: "Product title with search term highlighted"
+              - type: string
+                description: "Image URL"
+              - type: ["null", string]
+                description: "Variant flag (null or 'is_variant')"
+              - type: [integer, string]
+                description: "Product ID as integer or string"
+            minItems: 5
+            maxItems: 5
+          - type: array
+            description: "Category result or empty result with 2 elements"
+            prefixItems:
+              - type: string
+              - type: string
+            minItems: 2
+            maxItems: 2
+      example:
+        - ["a1957388.html", "Amazon Echo <b>Input</b> weiß", "//gzhls.at/i/73/88/1957388-n0.jpg", null, "1957388"]
+        - ["a1957388.html", "Amazon Echo <b>Input</b> weiß", "//gzhls.at/i/73/88/1957388-n0.jpg", null, 1957388]
+        - ["", ""]
+        - ["./?cat=hifizub", "Audio & HiFi > HiFi-Komponenten > Zubehör"]
     ProductRatingsRes:
       type: object
       properties:

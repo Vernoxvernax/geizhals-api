@@ -1,7 +1,7 @@
 # See https://redocly.com/docs/cli/configuration/ for more information.
 apis:
-  sample@v1: 
-    root: openapi/openapi.yaml
+  core@v1:
+    root: ./openapi/openapi.yaml
 extends:
   - recommended
 rules:
@@ -10,17 +10,3 @@ rules:
   security-defined: off # ACS not using any authentication
   no-ambiguous-paths: off # Since '/usercontent/v0/pricealarm/{id}/enable' and '/usercontent/v0/pricealarm/product/{id}' exist
   no-path-trailing-slash: off # Official clients call '/usercontent/v0/push_notification/'
-theme:
-  openapi:
-    htmlTemplate: ./docs/index.html
-    theme:
-      colors:
-        primary:
-          main: "#32329f"
-    generateCodeSamples:
-      languages:  # Array of language config objects; indicates in which languages to generate code samples.
-        - lang: curl
-        - lang: Node.js
-        - lang: JavaScript
-        - lang: PHP
-        - lang: Python
